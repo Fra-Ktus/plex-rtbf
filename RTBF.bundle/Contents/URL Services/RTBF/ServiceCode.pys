@@ -1,0 +1,32 @@
+import urllib
+import re
+####################################################################################################
+
+def MetadataObjectForURL(url):
+  return URLService.MetadataObjectForURL(url)
+
+####################################################################################################
+
+def MediaObjectsForURL(url):
+  return [MediaObject(container = Container.MP4, video_codec = VideoCodec.H264, audio_codec = AudioCodec.AAC,video_resolution = "sd",
+      optimized_for_streaming = True,
+      audio_channels = 2,                                                  
+      parts = [PartObject(key=Callback(PlayVideo, url = url))]
+    )
+  ]                                                                      
+
+RTBF_VIDEO_STREAMING_URL = 'http://streaming.sbsbelgium.be/%s.mp4'       
+
+def PlayVideo(url):
+  # Request the URL
+  html = HTML.ElementFromURL(url)
+  #head = HTML.StringFromElement(html[0]).split('":"')
+  #src = html.xpath(".//source")[0].get('src')
+  config = html.xpath('.//div[contains(@class, "js-player-embed")]')[0].get("data-video")
+  config_json = str(config)
+  Log.Exception(config_json)
+  #url = re.match('url":"(.*)","downloadUrl"', config_json)
+  video_url = config_json.split("\",\"highUrl")[1].split("\",\"")[0].split("\":\"")[1].replace("\\", "")
+  Log.Exception(video_url)
+  #video_url = RTBF_VIDEO_STREAMING_URL % src
+  return Redirect(video_url)
