@@ -30,10 +30,6 @@ def MainMenu():
       DirectoryObject(
         key     = Callback(GetItemList, url='', title2='Videos'),
         title   = L('Videos')
-#      ),
-#      DirectoryObject(
-#        key     = Callback(GetProgramList, url='programmas', title2='Programmas'),
-#        title   = L('Programmas')
       )
     ]
   )                                 
@@ -73,15 +69,10 @@ def GetItemList(url, title2, page=''):
   for video in videos:
     Log.Info("video:")
     try:
-     # video_id=video.xpath(".//a")[1].get("href").split('id=')[1]
       video_id=video.xpath(".//a")[0].get("href").split('id=')[1]
       Log ("video url: %s" %video.xpath(".//a")[0].get("href"))
       Log ("video id: %s" %video.xpath(".//a")[0].get("href").split('id=')[1])
       video_page_url = RTBF_VIDEO_PAGE_URL % video_id
-      #video_page_url = "http://www.rtbf.be" + video.xpath(".//a")[0].get("href")
-      #title = video.xpath(".//a")[1].text
-      #title = video.xpath(".//a")[0].text
-      #title = video.xpath(".//a")[0].get("href")
       title = video.xpath(".//a")[0].get("title")
       img = video.xpath(".//img")[0].get("src")
       #sort = video_page_url.split('/')[-1] 
