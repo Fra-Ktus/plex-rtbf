@@ -12,7 +12,7 @@ ART = 'art-default.png'
 ####################################################################################################
 def Start():
 
-  Plugin.AddPrefixHandler('/video/rtbf', MainMenu, 'RTBF', ICON, ART)
+  Plugin.AddPrefixHandler('/video', MainMenu, 'RTBF', ICON, ART)
   Plugin.AddViewGroup('InfoList', viewMode='InfoList', mediaType='items')
   ObjectContainer.title1 = 'RTBF'
   ObjectContainer.content = ContainerContent.GenericVideos
@@ -66,15 +66,23 @@ def GetItemList(url, title2, page=''):
   oc = ObjectContainer(title2=title2, view_group='InfoList', http_cookies=cookies)
   Log.Exception('videos')
   html = HTML.ElementFromURL(RTBF_PROGRAMMA_VIDEO_URL % (url))
+  Log ("html -> :")
+  Log (html)
   videos = html.xpath('.//div[contains(@class, "thumblock")]')
   Log.Info(videos)
   for video in videos:
     Log.Info("video:")
     try:
-      video_id=video.xpath(".//a")[1].get("href").split('id=')[1]
+     # video_id=video.xpath(".//a")[1].get("href").split('id=')[1]
+      video_id=video.xpath(".//a")[0].get("href").split('id=')[1]
+      Log ("video url: %s" %video.xpath(".//a")[0].get("href"))
+      Log ("video id: %s" %video.xpath(".//a")[0].get("href").split('id=')[1])
       video_page_url = RTBF_VIDEO_PAGE_URL % video_id
       #video_page_url = "http://www.rtbf.be" + video.xpath(".//a")[0].get("href")
-      title = video.xpath(".//a")[1].text
+      #title = video.xpath(".//a")[1].text
+      #title = video.xpath(".//a")[0].text
+      #title = video.xpath(".//a")[0].get("href")
+      title = video.xpath(".//a")[0].get("title")
       img = video.xpath(".//img")[0].get("src")
       #sort = video_page_url.split('/')[-1] 
       #Log.Info(video_page_url)
@@ -105,3 +113,4 @@ def GetItemList(url, title2, page=''):
     oc.add(DirectoryObject(key=Callback(GetItemList, url=url, page='?'+page_url, title2='Volgende...'), title   = L('Volgende...')))
   
   return oc
+  
