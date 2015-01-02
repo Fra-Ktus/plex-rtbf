@@ -12,7 +12,7 @@ ART = 'art-default.png'
 ####################################################################################################
 def Start():
 
-  Plugin.AddPrefixHandler('/video', MainMenu, 'RTBF', ICON, ART)
+  Plugin.AddPrefixHandler('/video/rtbf', MainMenu, 'RTBF', ICON, ART)
   Plugin.AddViewGroup('InfoList', viewMode='InfoList', mediaType='items')
   ObjectContainer.title1 = 'RTBF'
   ObjectContainer.content = ContainerContent.GenericVideos
