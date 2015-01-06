@@ -9,7 +9,9 @@ def MetadataObjectForURL(url):
 	except:
 		raise Ex.MediaNotAvailable
 	title = html.xpath('//meta[@property="og:title"]/@content')[0]
-  	return VideoClipObject ( title = title )
+	thumb = html.xpath('//meta[@property="og:image"]/@content')[0]
+	summary = html.xpath('//meta[@property="og:description"]/@content')[0]
+  	return VideoClipObject ( title = title, summary = summary, thumb = thumb )
 
 ####################################################################################################
 
