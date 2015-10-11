@@ -28,9 +28,9 @@ def PlayVideo(url):
   Log ("RTBF PlayVideo " + url )
   # Request the URL
   html = HTML.ElementFromURL(url)
-  config = html.xpath('.//div[contains(@class, "js-embed-player")]')[0].get("data-video")
+  config = html.xpath('.//div[contains(@class, "js-embed-player")]')[0].get("data-media")
   config_json = str(config)
-  #Log ("RTBF config_json " + config_json )
+  # Log ("RTBF config_json " + config_json )
   Log.Exception(config_json)
   video_url = config_json.split("high")[1].split(",")[0]
   video_url = video_url.replace ("\\","")
