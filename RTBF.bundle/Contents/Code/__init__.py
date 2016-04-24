@@ -3,6 +3,12 @@ RTBF_URL	  = 'http://www.rtbf.be/'
 RTBF_PROGRAM_VIDEO_URL = 'http://www.rtbf.be/video/'
 RTBF_VIDEO_PAGE_URL='http://www.rtbf.be/video/embed?id=%s'
 
+RTBF_INFO = 'http://www.rtbf.be/auvio/categorie/info?id=1'
+RTBF_CULTURE = 'http://www.rtbf.be/auvio/categorie/culture?id=18'
+RTBF_MUSIQUE = 'http://www.rtbf.be/auvio/categorie/musique?id=23'
+RTBF_DOCUMENTAIRES = 'http://www.rtbf.be/auvio/categorie/documentaires?id=31'
+RTBF_ENFANTS = 'http://www.rtbf.be/auvio/categorie/enfants?id=32'
+
 ICON = 'rtbf_logo.png'
 ART = 'art-default.png'
 
@@ -23,68 +29,58 @@ def MainMenu():
 
   oc = ObjectContainer(
     objects = [
-      DirectoryObject(
-        key     = Callback(GetItemList, url='', title2='Videos'),
-        title   = L('Videos')
-      )
+      DirectoryObject( key = Callback(GetItemList, url=RTBF_INFO, title2='Info'), title = L('Info')),
+      DirectoryObject( key = Callback(GetItemList, url=RTBF_CULTURE, title2='Culture'), title = L('Culture')),
+      DirectoryObject( key = Callback(GetItemList, url=RTBF_MUSIQUE, title2='Musique'), title = L('Musique')),
+      DirectoryObject( key = Callback(GetItemList, url=RTBF_DOCUMENTAIRES, title2='Documentaires'), title = L('Documentaires')),
+      DirectoryObject( key = Callback(GetItemList, url=RTBF_ENFANTS, title2='Enfants'), title = L('Enfants'))
     ]
   )                                 
-  # append programs list directly
-  oc = GetProgramList(url="video/", oc=oc)
   return oc
 
 ####################################################################################################
 
-def GetProgramList(url, oc):
+def GetProgramList(url, title, oc):
   Log ("RTBF GetProgramList :" + url)
-  html = HTML.ElementFromURL(RTBF_URL + url)
-  #programs = html.xpath('.//li[contains(@class, "col-md-2")]')
-  programs = html.xpath('.//li[contains(@class, "col-md-2")]//a')
-  for program in programs:
-    #program_url = program.xpath(".//a")[0].get("href")
-    program_url = program.xpath("@href")[0]
-    if program_url.startswith (RTBF_PROGRAM_VIDEO_URL) == True:
-      program_url = program_url.split(RTBF_PROGRAM_VIDEO_URL)[1]
-    Log.Info(program_url)
-    title = program.xpath("text()")[0]
-    Log.Info(title)
-    do = DirectoryObject(key = Callback(GetItemList, url=program_url, title2=title), title = title)
-    oc.add(do)
-  return oc 
-	
+  program_url = url
+  do = DirectoryObject(key = Callback(GetItemList, url=program_url, title2=title), title = title)
+  oc.add(do)
+  return oc
+
 def GetItemList(url, title2, page=''):
   Log ("RTBF GetItemList :" + url)
   Log.Exception('GetItemList')
   cookies = HTTP.CookiesForURL(RTBF_URL)
-  unsortedVideos = {}
   oc = ObjectContainer(title2=title2, http_cookies=cookies)
   Log.Exception('videos')
-  program_url = RTBF_PROGRAM_VIDEO_URL + url
+  program_url = url
   Log ("RTBF url : " + program_url)
   html = HTML.ElementFromURL(program_url)
-  videos = html.xpath('.//div[contains(@class, "thumblock")]')
-  if len(videos) == 0:
-  	videos = html.xpath('.//li[contains(@class, "thumblock")]')
+  videos = html.xpath('.//article')
   Log.Info(videos)
   for video in videos:
     Log.Info("video:")
     try:
-      video_id=video.xpath(".//a")[0].get("href").split('id=')[1]
-      Log ("video url: %s" %video.xpath(".//a")[0].get("href"))
-      Log ("video id: %s" %video.xpath(".//a")[0].get("href").split('id=')[1])
-      video_page_url = RTBF_VIDEO_PAGE_URL % video_id
-      title = video.xpath(".//a")[0].get("title")
-      img = video.xpath(".//img")[0].get("src")
-      #sort = video_page_url.split('/')[-1] 
-      #Log.Info(video_page_url)
-      #try:
-      #  int(sort)  
-      #  unsortedVideos[sort] = VideoClipObject(url = video_page_url, title = title, thumb=img)
-      #except:
-      #  Log.Exception("not a nummeric key, video not added")
-      oc.add(VideoClipObject(url = video_page_url, title = title, thumb=img))
+      refs = video.xpath(".//a")
+      for ref in refs:
+        href = ref.get("href")
+        if (len(href) > 10):
+          video_page_url = href
+          title = ref.get("title")
+          # find image in the img tag...
+          img_tag = video.xpath(".//img")
+          img_srcset = img_tag[0].get("data-srcset")
+          imgs = img_srcset.split(",")
+          img = imgs[0].split(" ")[0]
+          #img = "http://ds1.ds.static.rtbf.be/media/program/image/ng_55a38eb6ea4db2f2d33a-324x183.png"
+          Log ("video url: " + video_page_url)
+          Log ("url title: " + title)
+          Log ("url img: " + img)
+          oc.add(VideoClipObject(url = video_page_url, title = title, thumb=img))
+          break
     except:
       Log.Exception("error adding VideoClipObject")
-      pass  
+      pass
   return oc
-  
+
+
