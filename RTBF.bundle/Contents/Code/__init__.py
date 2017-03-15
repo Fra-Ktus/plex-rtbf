@@ -90,6 +90,7 @@ def GetItemList(url, title2, page=''):
             imgs = img_srcset.split(",")
             img = imgs[0].split(" ")[0]
             #img = "http://ds1.ds.static.rtbf.be/media/program/image/ng_55a38eb6ea4db2f2d33a-324x183.png"
+            video_page_url = video_page_url.replace ("https","http")
             Log ("video url: " + video_page_url)
             Log ("url title: " + title)
             Log ("url img: " + img)
