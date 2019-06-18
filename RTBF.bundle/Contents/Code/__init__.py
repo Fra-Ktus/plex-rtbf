@@ -1,21 +1,21 @@
 import re, string
-RTBF_URL	  = 'http://www.rtbf.be/'
-RTBF_PROGRAM_VIDEO_URL = 'http://www.rtbf.be/video/'
-RTBF_VIDEO_PAGE_URL='http://www.rtbf.be/video/embed?id=%s'
+RTBF_URL	  = 'http://localhost:8006'
+RTBF_PROGRAM_VIDEO_URL = 'http://localhost:8006/video/'
+RTBF_VIDEO_PAGE_URL='http://localhost:8006/video/embed?id=%s'
 
-RTBF_INFO = 'http://www.rtbf.be/auvio/categorie/info?id=1'
-RTBF_METEO = 'http://www.rtbf.be/auvio/recherche?q=meteo'
-RTBF_CULTURE = 'http://www.rtbf.be/auvio/categorie/culture?id=18'
-RTBF_MUSIQUE = 'http://www.rtbf.be/auvio/categorie/musique?id=23'
-RTBF_DOCUMENTAIRES = 'http://www.rtbf.be/auvio/categorie/documentaires?id=31'
-RTBF_ENFANTS = 'http://www.rtbf.be/auvio/categorie/enfants?id=32'
-RTBF_SERIES = 'http://www.rtbf.be/auvio/categorie/series?id=35'
-RTBF_FILMS = 'http://www.rtbf.be/auvio/categorie/films?id=36'
-RTBF_HUMOUR = 'http://www.rtbf.be/auvio/categorie/humour?id=40'
-RTBF_DIVERTISSEMENT = 'http://www.rtbf.be/auvio/categorie/divertissement?id=29'
-RTBF_VIE_QUOTIDIENNE = 'http://www.rtbf.be/auvio/categorie/vie-quotidienne?id=44'
-RTBF_SPORT = 'http://www.rtbf.be/auvio/categorie/sport?id=9'
-RTBF_FOOTBALL = 'http://www.rtbf.be/auvio/categorie/sport/football?id=11'
+RTBF_INFO = 'http://localhost:8006/auvio/categorie/info?id=1'
+RTBF_METEO = 'http://localhost:8006/auvio/recherche?q=meteo'
+RTBF_CULTURE = 'http://localhost:8006/auvio/categorie/culture?id=18'
+RTBF_MUSIQUE = 'http://localhost:8006/auvio/categorie/musique?id=23'
+RTBF_DOCUMENTAIRES = 'http://localhost:8006/auvio/categorie/documentaires?id=31'
+RTBF_ENFANTS = 'http://localhost:8006/auvio/categorie/enfants?id=32'
+RTBF_SERIES = 'http://localhost:8006/auvio/categorie/series?id=35'
+RTBF_FILMS = 'http://localhost:8006/auvio/categorie/films?id=36'
+RTBF_HUMOUR = 'http://localhost:8006/auvio/categorie/humour?id=40'
+RTBF_DIVERTISSEMENT = 'http://localhost:8006/auvio/categorie/divertissement?id=29'
+RTBF_VIE_QUOTIDIENNE = 'http://localhost:8006/auvio/categorie/vie-quotidienne?id=44'
+RTBF_SPORT = 'http://localhost:8006/auvio/categorie/sport?id=9'
+RTBF_FOOTBALL = 'http://localhost:8006/auvio/categorie/sport/football?id=11'
 
 ICON = 'rtbf_logo.png'
 ART = 'art-default.png'
@@ -90,8 +90,10 @@ def GetItemList(url, title2, page=''):
             imgs = img_srcset.split(",")
             img = imgs[0].split(" ")[0]
             #img = "http://ds1.ds.static.rtbf.be/media/program/image/ng_55a38eb6ea4db2f2d33a-324x183.png"
+            Log ("original video url: " + video_page_url)
             video_page_url = video_page_url.replace ("https","http")
-            Log ("video url: " + video_page_url)
+            #video_page_url = video_page_url.replace ("https://www.rtbf.be","http://localhost:8006")
+            Log ("video url with proxy: " + video_page_url)
             Log ("url title: " + title)
             Log ("url img: " + img)
             oc.add(VideoClipObject(url = video_page_url, title = title, thumb=img))

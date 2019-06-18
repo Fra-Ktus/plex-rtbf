@@ -3,36 +3,48 @@ import re
 ####################################################################################################
 
 def MetadataObjectForURL(url):
-	Log ("RTBF MetadataObjectForURL " + url )
-	try:
-		html = HTML.ElementFromURL(url)
-	except:
-		raise Ex.MediaNotAvailable
-	title = html.xpath('//meta[@property="og:title"]/@content')[0]
-	thumb = html.xpath('//meta[@property="og:image"]/@content')[0]
-	summary = html.xpath('//meta[@property="og:description"]/@content')[0]
-  	return VideoClipObject ( title = title, summary = summary, thumb = thumb )
+    Log ("RTBF MetadataObjectForURL " + url )
+    proxy_url = url
+    proxy_url = proxy_url.replace ("http://www.rtbf.be","http://localhost:8006")
+    Log ("RTBF MetadataObjectForURL - Proxy URL is " + proxy_url )
+    try:
+    	html = HTML.ElementFromURL(proxy_url)
+    except:
+    	raise Ex.MediaNotAvailable
+    title = html.xpath('//meta[@property="og:title"]/@content')[0]
+    thumb = html.xpath('//meta[@property="og:image"]/@content')[0]
+    summary = html.xpath('//meta[@property="og:description"]/@content')[0]
+    return VideoClipObject ( title = title, summary = summary, thumb = thumb )
 
 ####################################################################################################
 
 def MediaObjectsForURL(url):
-  Log ("RTBF MediaObjectsForURL " + url )
-  return [MediaObject(container = Container.MP4, video_codec = VideoCodec.H264, audio_codec = AudioCodec.AAC,video_resolution = "sd",
-      optimized_for_streaming = True,
-      audio_channels = 2,                                                  
-      parts = [PartObject(key=Callback(PlayVideo, url = url))]
-    )
-  ]                                                                      
+    Log ("RTBF MediaObjectsForURL " + url )
+    proxy_url = url
+    proxy_url = proxy_url.replace ("http://www.rtbf.be","http://localhost:8006")
+    Log ("RTBF MediaObjectsForURL - Proxy URL is " + proxy_url )
+    return [MediaObject(container = Container.MP4, video_codec = VideoCodec.H264, audio_codec = AudioCodec.AAC,video_resolution = "sd",
+        optimized_for_streaming = True,
+        audio_channels = 2,                                                  
+        parts = [PartObject(key=Callback(PlayVideo, url = proxy_url))]
+        )
+    ]                                                                      
   
 def PlayVideo(url):
   Log ("RTBF PlayVideo " + url )
+  proxy_url = url
+  proxy_url = proxy_url.replace ("http://www.rtbf.be","http://localhost:8006")
+  Log ("RTBF PlayVideo - Proxy URL is " + proxy_url )
   # Request the URL
-  html = HTML.ElementFromURL(url)
+  html = HTML.ElementFromURL(proxy_url)
   iframe = html.xpath('.//iframe')
   media_url = iframe[0].get("src")
   Log ("RTBF media url " + media_url )
   # Request the media url that has the json
-  media_html = HTML.ElementFromURL(media_url)
+  proxy_media_url = media_url
+  proxy_media_url = proxy_media_url.replace ("https://www.rtbf.be","http://localhost:8006")
+  Log ("RTBF proxy media url " + proxy_media_url )
+  media_html = HTML.ElementFromURL(proxy_media_url)
   config = media_html.xpath('.//div[contains(@id, "js-embed-player")]')[0].get("data-media")
   config_json = str(config)
   Log ("RTBF config_json " + config_json )
